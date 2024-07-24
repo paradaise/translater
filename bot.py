@@ -42,7 +42,6 @@ def get_information(message):
             bot.send_message(message.chat.id,'<i>Чтобы перевести текст,отправь мне сообщение вида:</i>\n <b>[text to translate] [target lang] \n Пример</b>: Смотря откуда приходит фабрик, смотря сколько дитейлс <b> en</b>', parse_mode="html")
         else:
             target_lang = message.text.split()[-1]
-            print(len(message.text[:-2]))
             if checker(target_lang) == 'Ok' and len(message.text[:-2]) != 0:
                 bot.send_message(message.chat.id, translate_text(message.text[:-2],target_lang))
             else:
@@ -50,10 +49,7 @@ def get_information(message):
 
 
 def checker(lang):
-    for i in LANGUAGES:
-        if lang == i:
-            return 'Ok'
-    return 'Error'
+    return 'Ok' if lang in LANGUAGES else 'Error'
 
 
 def translate_text(text,target_lang = 'en'):
