@@ -1,5 +1,6 @@
 import telebot
 from googletrans import Translator
+from googletrans import LANGUAGES
 from api_tokens import TG_API_TOKEN
 from telebot import types
 
@@ -41,7 +42,18 @@ def get_information(message):
             bot.send_message(message.chat.id,'<i>Чтобы перевести текст,отправь мне сообщение вида:</i>\n <b>[text to translate] [target lang] \n Пример</b>: Смотря откуда приходит фабрик, смотря сколько дитейлс <b> en</b>', parse_mode="html")
         else:
             target_lang = message.text.split()[-1]
-            bot.send_message(message.chat.id, translate_text(message.text[:-2],target_lang))
+            print(len(message.text[:-2]))
+            if checker(target_lang) == 'Ok' and len(message.text[:-2]) != 0:
+                bot.send_message(message.chat.id, translate_text(message.text[:-2],target_lang))
+            else:
+                bot.send_message(message.chat.id, '<i>Не корректный ввод, бот не может обработать его, нажмите "Перевести текст" в меню и посмотрите пример!</i>',parse_mode="html")
+
+
+def checker(lang):
+    for i in LANGUAGES:
+        if lang == i:
+            return 'Ok'
+    return 'Error'
 
 
 def translate_text(text,target_lang = 'en'):
