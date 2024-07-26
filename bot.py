@@ -5,7 +5,7 @@ from api_tokens import TG_API_TOKEN
 from telebot import types
 
 bot = telebot.TeleBot(TG_API_TOKEN)
-main_menu = ('📑Контакты','Перевести текст','💸Поддержать')
+main_menu = ('📑Контакты','Перевести текст','💸Поддержать','📚Список языков')
 donation_menu = ('🫰Юмани', '💰СБП', '↩️Назад')
 
 def keyboard(menu):
@@ -20,8 +20,8 @@ def start(message):
     username = message.from_user.username
     name = message.from_user.first_name
     bot.reply_to(message, f'<i>Привет,<b>{name} AKA {username}</b>!Я бот переводчик.Я умею переводить более чем на 100 языков мира!\nЯ сам понимаю твой исходный язык, поэтому тебе стоит указать для меня только ключ языка состоящий из двух букв,\n так что лови файл в котором есть ключ для каждого языка!</i>', reply_markup=keyboard(main_menu), parse_mode="html")
-    document = open('languages.txt','rb')
-    bot.send_document(message.chat.id, document)
+    
+    send_document(message)
 
 
 @bot.message_handler(content_types=['text'])
@@ -40,6 +40,9 @@ def get_information(message):
             bot.send_message(message.chat.id,'↩️Возвращаемся к основному меню', reply_markup = keyboard(main_menu))
         elif message.text == 'Перевести текст':
             bot.send_message(message.chat.id,'<i>Чтобы перевести текст,отправь мне сообщение вида:</i>\n <b>[text to translate] [target lang] \n Пример</b>: Смотря откуда приходит фабрик, смотря сколько дитейлс <b> en</b>', parse_mode="html")
+        elif message.text == '📚Список языков':
+            bot.send_message(message.chat.id,'<i>Вот список языков:</i>', parse_mode="html")
+            send_document(message)
         else:
             target_lang = message.text.split()[-1]
             if checker(target_lang) == 'Ok' and len(message.text[:-2]) != 0:
@@ -56,6 +59,8 @@ def translate_text(text,target_lang = 'en'):
     translation = Translator().translate(text,target_lang)
     return translation.text
 
-
+def send_document(message):
+    document = open('languages.txt','rb')
+    bot.send_document(message.chat.id, document)
 
 bot.polling()
